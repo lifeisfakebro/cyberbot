@@ -1,0 +1,21 @@
+{
+  "rss_sources": [
+    "https://feeds.feedburner.com/TheHackersNews",
+    "https://www.bleepingcomputer.com/feed/",
+    "https://krebsonsecurity.com/feed/",
+    "https://www.darkreading.com/rss.xml",
+    "https://threatpost.com/feed/"
+  ],
+
+  "twitter_accounts": [
+  ],
+
+  "nitter_instances": [
+    "https://nitter.net",
+    "https://nitter.poast.org",
+    "https://xcancel.com"
+  ],
+
+  "max_items_per_run": 10,
+  "request_timeout_seconds": 15
+}

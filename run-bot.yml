@@ -1,0 +1,39 @@
+name: Cyber News Bot
+
+on:
+  schedule:
+    # يشتغل كل 30 دقيقة (GitHub قد يؤخره بضع دقائق وقت الازدحام، هذا طبيعي)
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}   # يسمح بتشغيل يدوي من تبويب Actions لأغراض الاختبار
+
+permissions:
+  contents: write   # مطلوب عشان البوت يقدر يحفظ ملف الحالة (seen_items.json) بالريبو
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run cyber news bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
+
+      - name: Commit updated state file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state/seen_items.json
+          git diff --staged --quiet || git commit -m "chore: تحديث سجل الأخبار المرسلة [skip ci]"
+          git push
