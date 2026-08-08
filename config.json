@@ -1,10 +1,23 @@
 {
   "rss_sources": [
-    "https://feeds.feedburner.com/TheHackersNews",
-    "https://www.bleepingcomputer.com/feed/",
-    "https://krebsonsecurity.com/feed/",
-    "https://www.darkreading.com/rss.xml",
-    "https://threatpost.com/feed/"
+    "https://www.hackthebox.com/rss/blog/all",
+    "https://www.hackthebox.com/rss/blog/red-teaming",
+    "https://www.hackthebox.com/rss/blog/blue-teaming",
+    "https://www.hackthebox.com/rss/blog/write-ups",
+    "https://www.hackthebox.com/rss/blog/threat-intelligence",
+    "https://www.hackthebox.com/rss/blog/htb-research-labs",
+    "https://www.hackthebox.com/rss/blog/news",
+    "https://feeds.feedburner.com/TheHackersNews?format=xml",
+    "https://www.darkreading.com/rss/all.xml",
+    "https://krebsonsecurity.com/feed",
+    "https://therecord.media/feed",
+    "https://isc.sans.edu/rssfeed_full.xml",
+    "https://www.welivesecurity.com/en/rss/feed/",
+    "https://grahamcluley.com/feed/",
+    "https://cyberscoop.com/feed/",
+    "https://www.infosecurity-magazine.com/rss/news/",
+    "https://news.sophos.com/en-us/feed/",
+    "https://arstechnica.com/tag/security/feed/"
   ],
 
   "twitter_accounts": [
