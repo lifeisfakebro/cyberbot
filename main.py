@@ -72,14 +72,14 @@ def main():
     for item in items_to_send:
         print(f"جاري إرسال: {item['title'][:60]}")
 
-       image_url = None
-           full_text = None
+        image_url = None
+        full_text = None
            if item.get("origin") == "rss":
                content = extract_article_content(item["link"], timeout)
                image_url = content.get("image")
                full_text = content.get("text")
 
-           success = send_news_item(bot_token, chat_id, item, image_url, full_text)
+               success = send_news_item(bot_token, chat_id, item, image_url, full_text)
 
         # نسجل الخبر كـ"مُرسل" بغض النظر عن نجاح الإرسال، عشان ما نعلق
         # على نفس الخبر لو كان فيه مشكلة دائمة (رابط تالف مثلاً)
