@@ -12,7 +12,7 @@ import time
 
 from modules.rss_fetcher import fetch_all_rss
 from modules.twitter_fetcher import fetch_all_twitter
-from modules.image_extractor import extract_image_url
+from modules.content_extractor import extract_article_content
 from modules.telegram_sender import send_news_item
 from modules.state_manager import load_state, save_state, is_new, mark_seen
 
@@ -72,11 +72,14 @@ def main():
     for item in items_to_send:
         print(f"جاري إرسال: {item['title'][:60]}")
 
-        image_url = None
-        if item.get("origin") == "rss":
-            image_url = extract_image_url(item["link"], timeout)
+       image_url = None
+           full_text = None
+           if item.get("origin") == "rss":
+               content = extract_article_content(item["link"], timeout)
+               image_url = content.get("image")
+               full_text = content.get("text")
 
-        success = send_news_item(bot_token, chat_id, item, image_url)
+           success = send_news_item(bot_token, chat_id, item, image_url, full_text)
 
         # نسجل الخبر كـ"مُرسل" بغض النظر عن نجاح الإرسال، عشان ما نعلق
         # على نفس الخبر لو كان فيه مشكلة دائمة (رابط تالف مثلاً)
