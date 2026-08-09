@@ -1,7 +1,7 @@
 """
 بوت الأخبار السيبرانية - الملف الرئيسي
 
-يسحب أخبار من مصادر RSS وحسابات X، يستخرج صورة لكل خبر،
+يسحب أخبار من مصادر RSS وحسابات X، يستخرج صورة ونص كامل لكل خبر،
 ويرسلها على قناة/شات تيليجرام. يحفظ سجل الأخبار المرسلة
 عشان ما يكرر إرسال نفس الخبر.
 """
@@ -25,7 +25,6 @@ def load_config() -> dict:
 
 
 def main():
-    # 1) قراءة إعدادات تيليجرام من متغيرات البيئة (GitHub Secrets)
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
 
@@ -37,7 +36,6 @@ def main():
     timeout = config.get("request_timeout_seconds", 15)
     max_per_run = config.get("max_items_per_run", 10)
 
-    # 2) سحب الأخبار من كل المصادر
     print("=== بدء سحب الأخبار ===")
     rss_items = fetch_all_rss(config.get("rss_sources", []), timeout)
     twitter_items = fetch_all_twitter(
@@ -49,10 +47,8 @@ def main():
     all_items = rss_items + twitter_items
     print(f"إجمالي الأخبار المسحوبة: {len(all_items)}")
 
-    # 3) ترتيب الأخبار الأحدث أولاً (لو فيه تاريخ نشر)
     all_items.sort(key=lambda x: x.get("published_ts", 0), reverse=True)
 
-    # 4) فلترة الأخبار الجديدة فقط (اللي ما تم إرسالها من قبل)
     seen_hashes = load_state()
     new_items = []
     for item in all_items:
@@ -65,7 +61,6 @@ def main():
         print("لا يوجد أخبار جديدة بهذه الجولة.")
         return
 
-    # 5) نحد عدد الأخبار المرسلة بكل تشغيلة عشان ما نغرق الشات دفعة وحدة
     items_to_send = new_items[:max_per_run]
 
     sent_count = 0
@@ -74,24 +69,20 @@ def main():
 
         image_url = None
         full_text = None
-           if item.get("origin") == "rss":
-               content = extract_article_content(item["link"], timeout)
-               image_url = content.get("image")
-               full_text = content.get("text")
+        if item.get("origin") == "rss":
+            content = extract_article_content(item["link"], timeout)
+            image_url = content.get("image")
+            full_text = content.get("text")
 
-               success = send_news_item(bot_token, chat_id, item, image_url, full_text)
+        success = send_news_item(bot_token, chat_id, item, image_url, full_text)
 
-        # نسجل الخبر كـ"مُرسل" بغض النظر عن نجاح الإرسال، عشان ما نعلق
-        # على نفس الخبر لو كان فيه مشكلة دائمة (رابط تالف مثلاً)
         mark_seen(item["link"], seen_hashes)
 
         if success:
             sent_count += 1
 
-        # تأخير بسيط بين كل رسالة عشان ما نصطدم بحدود تيليجرام (rate limit)
         time.sleep(1.5)
 
-    # 6) حفظ الحالة المحدثة
     save_state(seen_hashes)
     print(f"=== تم إرسال {sent_count} من {len(items_to_send)} خبر بنجاح ===")
 
